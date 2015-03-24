@@ -29,13 +29,29 @@ try:
         if not prod_dict.get('installer_type') == 'apple_update_metadata':
             if not prod_dict.get('installer_type') == 'nopkg':
                 joined_path = os.path.join(repo_base, 'icons', prod_dict.get('name')) + '.png'
-                this_prod_dict = {
-                                'Name': prod_dict.get('display_name'),
-                                'distinct_name': prod_dict.get('name'),
-                                #'description': (prod_dict.get('description'))[:130] + '...',
-                                'link': (os.path.join('static/pkgs', prod_dict.get('installer_item_location'))).replace(' ', '%20'),
-                                'version': prod_dict.get('version'),
-                                }
+                this_prod_dict = {}
+                try:
+                    this_prod_dict['description'] = (prod_dict.get('description'))[:130] + '...'
+                except Exception:
+                    this_prod_dict['description'] = 'No description found'
+                try:
+                    this_prod_dict['Name'] = prod_dict.get('display_name')
+                except Exception:
+                    this_prod_dict['Name'] = 'No name found'
+                try:
+                    this_prod_dict['distinct_name'] = prod_dict.get('name')
+                except Exception:
+                    this_prod_dict['distinct_name'] = 'No disctinct name found'
+                try:
+                    this_prod_dict['link'] = (os.path.join('static/pkgs', prod_dict.get('installer_item_location'))).replace(' ', '%20')
+                except Exception:
+                    this_prod_dict['link'] = 'No link found'
+                try:
+                    this_prod_dict['version'] = prod_dict.get('version')
+                except Exception:
+                    this_prod_dict['version'] = 'No version found'
+
+                
                 if prod_dict.get('installer_type') == 'profile':
                     this_prod_dict['icon_url'] = 'static/mobileconfig.png'
                 elif prod_dict.get('icon_name'):
