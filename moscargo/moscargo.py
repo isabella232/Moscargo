@@ -6,7 +6,7 @@ import plistlib
 import os
 
 #set this to the base of your munki repo:
-repo_base = '/Users/Shared/repo/'
+repo_base = os.environ['MOSCARGO_REPO']
 # ad override the catalog to parse below:
 catalog_to_parse = 'all'
 
@@ -23,25 +23,25 @@ def get_key_watcher():
     return key_not_seen
 
 try:
-    products = plistlib.readPlist(repo_base + 'catalogs/all')
+    products = plistlib.readPlist(os.path.join(repo_base, 'catalogs/all'))
     prodlist = []
     for prod_dict in products:
         if not prod_dict.get('installer_type') == 'apple_update_metadata':
             if not prod_dict.get('installer_type') == 'nopkg':
-                joined_path = (repo_base + 'icons/' + prod_dict.get('name') + '.png')
+                joined_path = os.path.join(repo_base, 'icons', prod_dict.get('name')) + '.png'
                 this_prod_dict = {
                                 'Name': prod_dict.get('display_name'),
                                 'distinct_name': prod_dict.get('name'),
-                                'description': (prod_dict.get('description'))[:130] + '...',
-                                'link': ('static/pkgs/' + prod_dict.get('installer_item_location')).replace(' ', '%20'),
+                                #'description': (prod_dict.get('description'))[:130] + '...',
+                                'link': (os.path.join('static/pkgs', prod_dict.get('installer_item_location'))).replace(' ', '%20'),
                                 'version': prod_dict.get('version'),
                                 }
                 if prod_dict.get('installer_type') == 'profile':
                     this_prod_dict['icon_url'] = 'static/mobileconfig.png'
                 elif prod_dict.get('icon_name'):
-                    this_prod_dict['icon_url'] = 'static/icons/' + prod_dict.get('icon_name').replace(' ', '%20')
+                    this_prod_dict['icon_url'] = (os.path.join('static/icons', prod_dict.get('icon_name'))).replace(' ', '%20')
                 elif os.path.exists(joined_path):
-                    this_prod_dict['icon_url'] = 'static/icons/' + (prod_dict.get('name') + '.png').replace(' ', '%20')
+                    this_prod_dict['icon_url'] = (os.path.join('static/icons', prod_dict.get('name') + '.png')).replace(' ', '%20')
                 else:
                     this_prod_dict['icon_url'] = 'static/package.png'
                 prodlist.append(this_prod_dict)
