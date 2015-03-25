@@ -3,6 +3,7 @@ FROM ubuntu:14.04
 MAINTAINER macadmins
 
 ENV APP_ROOT /home/docker/code
+ENV DEBIAN_FRONTEND noninteractive
 ENV MOSCARGO_REPO /munki
 
 #RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe" > /etc/apt/sources.list
@@ -14,16 +15,12 @@ RUN apt-get install -y nginx supervisor
 RUN easy_install pip
 
 # install uwsgi now because it takes a little while
-RUN pip install uwsgi flask-bootstrap flask-appconfig flask-wtf docker-py
+RUN pip install uwsgi flask-appconfig
 
 # install nginx
-RUN apt-get install -y software-properties-common python-software-properties curl
+RUN apt-get install -y software-properties-common python-software-properties
 RUN apt-get update
 RUN add-apt-repository -y ppa:nginx/stable
-RUN apt-get install -y sqlite3
-
-# # Get Moscargo app
-# RUN curl -O https://raw.githubusercontent.com/arubdesu/Moscargo/master/moscargo.py
 
 # install our code
 ADD . ${APP_ROOT}/
